@@ -1,0 +1,21 @@
+version: 2.1
+
+workflows:
+   heroku_deploy:
+     jobs:
+       - deploy
+
+jobs:
+  deploy:
+     machine: true
+     steps:
+       - checkout
+       - run:
+           name: Deploy to Heroku
+           command: |
+            sudo curl https://cli-assets.heroku.com/install.sh | sh
+            HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:login
+            HEROKU_API_KEY=${HEROKU_TOKEN} heroku create -a alpinehelloworld-loic || echo "Already exists"
+            HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:push web -a alpinehelloworld-loic
+            HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:release web -a alpinehelloworld-loic
+
